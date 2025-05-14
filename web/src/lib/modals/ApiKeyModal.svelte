@@ -1,11 +1,12 @@
 <script lang="ts">
+  import Checkbox from '$lib/components/elements/checkbox.svelte';
   import {
     notificationController,
     NotificationType,
   } from '$lib/components/shared-components/notification/notification';
   import ApiKeyGrid from '$lib/components/user-settings-page/user-api-key-grid.svelte';
-  import { Button, Modal, ModalBody, ModalFooter } from '@immich/ui';
   import { Permission } from '@immich/sdk';
+  import { Button, Modal, ModalBody, ModalFooter } from '@immich/ui';
   import { mdiKeyVariant } from '@mdi/js';
   import { t } from 'svelte-i18n';
 
@@ -151,6 +152,14 @@
     selectedItems = selectedItems.filter((item) => !permissions.includes(item));
   };
 
+  const handleSelectAll = () => {
+    if (selectAll) {
+      selectedItems = [Permission.All];
+    } else {
+      selectedItems = [];
+    }
+  };
+
   const handleSubmit = () => {
     if (!apiKey.name) {
       notificationController.show({
@@ -180,6 +189,13 @@
         <label class="immich-form-label" for="name">{$t('name')}</label>
         <input class="immich-form-input" id="name" name="name" type="text" bind:value={apiKey.name} />
       </div>
+      <Checkbox
+        id="select-all"
+        label={$t('select_all')}
+        labelClass="text-sm dark:text-immich-dark-fg"
+        bind:checked={selectAll}
+        onchange={handleSelectAll}
+      />
       {#each permissions as [title, subItems] (title)}
         <ApiKeyGrid {title} {subItems} {selectedItems} {handleSelectItems} {handleDeselectItems} />
       {/each}
